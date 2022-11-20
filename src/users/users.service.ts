@@ -16,7 +16,7 @@ export class UsersService {
   }
 
   findAll() {
-    return this.userModel.find()
+    return this.userModel.find({}, '-password')
   }
 
   findOne(id: string) {
