@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
-import { hash } from 'bcrypt'
+import { hash, compare } from 'bcrypt'
 
 export type UserDocument = User & Document
 
@@ -11,7 +11,7 @@ export class User {
   @Prop({ required: true, unique: true })
   email: string
 
-  @Prop({ required: true })
+  @Prop({ required: true, select: true })
   password: string
 
   @Prop()
@@ -28,3 +28,21 @@ UserSchema.pre('save', async function (next) {
   this.password = hashed
   next()
 })
+
+UserSchema.pre('findOneAndUpdate', async function (next) {
+  const docToUpdate = await this.model.findOne(this.getQuery(), '+password')
+  const payload = this.getUpdate()['$set']
+
+  if (payload.password !== docToUpdate.password) {
+    const hashed = await hash(payload.password, 10)
+    this.getUpdate()['$set'].password = hashed
+  }
+
+  next()
+})
+
+UserSchema.methods.isValidPassword = function (candidatePassword: string) {
+  compare(candidatePassword, this.password, function (err, isMatch) {
+    return isMatch
+  })
+}
