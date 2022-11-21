@@ -1,5 +1,5 @@
 import { CreateUserDto } from '@/users/dto/create-user.dto'
-import { Body, Controller, Post, Request, UseGuards } from '@nestjs/common'
+import { Body, Controller, Get, Post, Request, UseGuards } from '@nestjs/common'
 
 import { AuthService } from './auth.service'
 import { Public } from './decorators/public-route.decorator'
@@ -20,5 +20,11 @@ export class AuthController {
   @Post('signup')
   async signup(@Body() body: CreateUserDto) {
     return this.authService.create(body)
+  }
+
+  @UseGuards(LocalAuthGuard)
+  @Get('my-profile')
+  async profile(@Request() request: any) {
+    return request.user
   }
 }

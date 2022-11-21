@@ -17,7 +17,7 @@ export class User {
   @Prop({ required: true, select: true })
   password: string
 
-  @Prop()
+  @Prop({ default: 'standard' })
   permission: string
 
   @Prop({ required: true })

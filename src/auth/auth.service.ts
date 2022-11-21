@@ -5,13 +5,12 @@ import { compare } from 'bcrypt'
 
 import { UsersService } from '../users/users.service'
 import { CreateUserDto } from './../users/dto/create-user.dto'
-import { IUser } from './interfaces/User'
 
 @Injectable()
 export class AuthService {
   constructor(private usersService: UsersService, private jwtService: JwtService) {}
 
-  async validateUser(email: string, userPassword: string): Promise<IUser | null> {
+  async validateUser(email: string, userPassword: string): Promise<UserDocument | null> {
     const user = await this.usersService.findByEmail(email)
 
     if (user) {
