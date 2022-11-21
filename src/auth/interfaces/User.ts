@@ -9,7 +9,9 @@ export interface IUser {
 }
 
 export interface IUserPayload {
-  sub: mongoose.Schema.Types.ObjectId
+  sub: string
   email: string
   name: string
+  username: string
+  permission: string
 }

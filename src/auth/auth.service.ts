@@ -1,7 +1,6 @@
 import { UserDocument } from '@/users/schemas/user.schema'
 import { Injectable } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
-import { compare } from 'bcrypt'
 
 import { UsersService } from '../users/users.service'
 import { CreateUserDto } from './../users/dto/create-user.dto'
@@ -14,8 +13,8 @@ export class AuthService {
     const user = await this.usersService.findByEmail(email)
 
     if (user) {
-      const matchPassword = await compare(userPassword, user.password)
-      return matchPassword && user
+      const isValidPassword = await user.isValidPassword(userPassword)
+      return isValidPassword && user
     }
 
     return null
@@ -40,8 +39,13 @@ export class AuthService {
     const doc: UserDocument = await this.usersService.create(user)
 
     return {
-      access_token: this.jwtService.sign({ username: doc.name, sub: doc._id }),
+      access_token: this.jwtService.sign({ username: doc.email, sub: doc._id }),
       user: doc
     }
+  }
+
+  async getUser(id: string): Promise<UserDocument> {
+    const user = await this.usersService.findOne(id)
+    return user
   }
 }
