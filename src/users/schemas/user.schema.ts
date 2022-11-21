@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { hash, compare } from 'bcrypt'
+import { Document } from 'mongoose'
 
 export type UserDocument = User & Document
 
@@ -15,7 +16,7 @@ export class User {
   password: string
 
   @Prop()
-  permision: string
+  permission: string
 
   @Prop({ required: true })
   phone: string
