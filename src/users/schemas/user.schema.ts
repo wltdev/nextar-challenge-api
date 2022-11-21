@@ -1,8 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { hash, compare } from 'bcrypt'
-import { Document } from 'mongoose'
+import mongoose from 'mongoose'
 
-export type UserDocument = User & Document
+export interface UserDocument extends User {
+  _id: mongoose.Schema.Types.ObjectId
+}
 
 @Schema()
 export class User {
