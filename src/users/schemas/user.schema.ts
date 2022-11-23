@@ -6,12 +6,6 @@ export interface UserDocument extends User {
   isValidPassword?: (password: string) => Promise<boolean>
 }
 
-export interface FindParams {
-  term?: string
-  page: number
-  limit: number
-}
-
 export interface UserQuery {
   $or: [
     {

@@ -4,7 +4,8 @@ import { Model } from 'mongoose'
 
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
-import { FindParams, User, UserDocument, UserQuery } from './schemas/user.schema'
+import { FindParams } from './interfaces/request'
+import { User, UserDocument, UserQuery } from './schemas/user.schema'
 
 @Injectable()
 export class UsersService {
@@ -24,7 +25,7 @@ export class UsersService {
    * List users
    * @returns User[]
    */
-  findAll({ term, page, limit }: FindParams) {
+  findAll({ term, page, limit }: FindParams, currentUser: string) {
     let find = {} as UserQuery
 
     if (term) {
@@ -38,7 +39,10 @@ export class UsersService {
     const _limit = Number(limit) ?? 10
 
     return this.userModel
-      .find(find)
+      .find({
+        ...find,
+        _id: { $ne: currentUser }
+      })
       .sort({ createdAt: 'desc' })
       .skip(_page * _limit)
       .limit(_limit)
