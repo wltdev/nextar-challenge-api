@@ -1,3 +1,4 @@
+import { UpdateUserDto } from '@/users/dto/update-user.dto'
 import { UserDocument } from '@/users/schemas/user.schema'
 import { Injectable } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
@@ -47,5 +48,9 @@ export class AuthService {
   async getUser(id: string): Promise<UserDocument> {
     const user = await this.usersService.findOne(id)
     return user
+  }
+
+  async update(id: string, payload: UpdateUserDto): Promise<UserDocument> {
+    return this.usersService.update(id, payload)
   }
 }

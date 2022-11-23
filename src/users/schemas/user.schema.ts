@@ -1,10 +1,26 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { hash, compare } from 'bcrypt'
-import mongoose from 'mongoose'
 
 export interface UserDocument extends User {
   _id: string
   isValidPassword?: (password: string) => Promise<boolean>
+}
+
+export interface FindParams {
+  term?: string
+  page: number
+  limit: number
+}
+
+export interface UserQuery {
+  $or: [
+    {
+      name: RegExp
+    },
+    {
+      email: RegExp
+    }
+  ]
 }
 
 @Schema({ timestamps: true })
@@ -15,7 +31,7 @@ export class User {
   @Prop({ required: true, unique: true })
   email: string
 
-  @Prop({ required: true, select: false, minlength: 6 })
+  @Prop({ required: true, minlength: 6 })
   password: string
 
   @Prop({ default: 'standard' })
@@ -33,6 +49,10 @@ UserSchema.pre('save', async function (next) {
 
   next()
 })
+
+// UserSchema.path('password').validate(function (payload) {
+//   return payload.length < 6
+// }, 'Path `password` is shorter than the minimum allowed length (6)')
 
 UserSchema.pre('findOneAndUpdate', async function (next) {
   const docToUpdate = await this.model.findOne(this.getQuery(), '+password')

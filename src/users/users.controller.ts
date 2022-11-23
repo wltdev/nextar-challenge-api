@@ -1,9 +1,11 @@
-import { Controller, Get, Post, Body, Param, Delete, Put } from '@nestjs/common'
+import { Controller, Get, Post, Body, Param, Delete, Put, Req } from '@nestjs/common'
+import { Request } from 'express'
 
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { Roles } from './roles/roles.decorators'
 import { Role } from './roles/roles.enum'
+import { FindParams } from './schemas/user.schema'
 import { UsersService } from './users.service'
 
 @Controller('users')
@@ -17,8 +19,9 @@ export class UsersController {
   }
 
   @Get()
-  async findAll() {
-    return await this.usersService.findAll()
+  async findAll(@Req() request: Request) {
+    const { term, page, limit } = request.query as unknown as FindParams
+    return await this.usersService.findAll({ term, page, limit })
   }
 
   @Get(':id')

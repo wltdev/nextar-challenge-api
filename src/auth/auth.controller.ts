@@ -1,6 +1,7 @@
 import { CreateUserDto } from '@/users/dto/create-user.dto'
-import { Body, Controller, Get, Post, Request, UseGuards } from '@nestjs/common'
+import { Body, Controller, Get, Post, Put, Request, UseGuards } from '@nestjs/common'
 
+import { UpdateUserDto } from './../users/dto/update-user.dto'
 import { AuthService } from './auth.service'
 import { Public } from './decorators/public-route.decorator'
 import { LocalAuthGuard } from './guards/local-auth.guard'
@@ -13,18 +14,22 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Post('signin')
   async signin(@Request() request: any) {
-    return this.authService.login(request.user)
+    return await this.authService.login(request.user)
   }
 
   @Public()
   @Post('signup')
   async signup(@Body() body: CreateUserDto) {
-    return this.authService.create(body)
+    return await this.authService.create(body)
   }
 
-  @UseGuards(LocalAuthGuard)
-  @Get('my-profile')
+  @Get('profile')
   async profile(@Request() request: any) {
     return request.user
+  }
+
+  @Put('profile')
+  async updateProfile(@Body() body: UpdateUserDto, @Request() request: any) {
+    return await this.authService.update(request.user._id, body)
   }
 }

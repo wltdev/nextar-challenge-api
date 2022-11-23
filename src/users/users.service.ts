@@ -4,31 +4,72 @@ import { Model } from 'mongoose'
 
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
-import { User, UserDocument } from './schemas/user.schema'
+import { FindParams, User, UserDocument, UserQuery } from './schemas/user.schema'
 
 @Injectable()
 export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
+  /**
+   * Update user
+   * @param createUserDto
+   * @returns User
+   */
   create(createUserDto: CreateUserDto) {
     const createdCat = new this.userModel(createUserDto)
     return createdCat.save()
   }
 
-  findAll() {
-    return this.userModel.find()
+  /**
+   * List users
+   * @returns User[]
+   */
+  findAll({ term, page, limit }: FindParams) {
+    let find = {} as UserQuery
+
+    if (term) {
+      const search = new RegExp(term, 'i')
+      find = {
+        $or: [{ name: search }, { email: search }]
+      }
+    }
+
+    const _page = Number(page) ?? 0
+    const _limit = Number(limit) ?? 10
+
+    return this.userModel
+      .find(find)
+      .sort({ createdAt: 'desc' })
+      .skip(_page * _limit)
+      .limit(_limit)
   }
 
+  /**
+   * Get a user
+   * @param id
+   * @returns User
+   */
   findOne(id: string) {
     return this.userModel.findById(id)
   }
 
+  /**
+   * Get user by email
+   * @param email
+   * @returns User
+   */
   findByEmail(email: string) {
     return this.userModel.findOne({ email }, '+password')
   }
 
+  /**
+   * Update user
+   * @param id
+   * @param updateUserDto
+   * @returns User
+   */
   update(id: string, updateUserDto: UpdateUserDto) {
-    return this.userModel.findByIdAndUpdate(
+    return this.userModel.findOneAndUpdate(
       {
         _id: id
       },
@@ -36,11 +77,17 @@ export class UsersService {
         $set: updateUserDto
       },
       {
+        runValidators: true,
         new: true
       }
     )
   }
 
+  /**
+   * Remove user
+   * @param id
+   * @returns void
+   */
   remove(id: string) {
     return this.userModel
       .deleteOne({

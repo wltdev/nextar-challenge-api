@@ -6,7 +6,7 @@ import { AuthModule } from './auth/auth.module'
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard'
 import { database } from './config'
 import { HttpExceptionFilter } from './exceptions/http-exceptions.filters'
-import { MongoErrorFilter } from './exceptions/mongodb-exception.filter'
+import { MongoErrorFilter } from './exceptions/mongo-exception.filter'
 import { RolesGuard } from './users/roles/roles.guard'
 import { UsersModule } from './users/users.module'
 
