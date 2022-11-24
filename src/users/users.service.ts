@@ -82,6 +82,7 @@ export class UsersService {
       },
       {
         runValidators: true,
+        context: 'query',
         new: true
       }
     )

@@ -1,5 +1,6 @@
-import { IUser } from '@/auth/interfaces/user'
 import { Request } from 'express'
+
+import { UserDocument } from '../schemas/user.schema'
 
 export interface FindParams {
   term?: string
@@ -7,6 +8,6 @@ export interface FindParams {
   limit: number
 }
 
-export interface IQueryRequest extends FindParams, Request {
-  user: IUser
+export interface IUserRequest extends FindParams, Request {
+  user: UserDocument
 }

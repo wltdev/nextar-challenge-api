@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Param, Delete, Put, Req } from '@nestjs/co
 
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
-import { IQueryRequest } from './interfaces/request'
+import { IUserRequest } from './interfaces/request'
 import { Roles } from './roles/roles.decorators'
 import { Role } from './roles/roles.enum'
 import { UsersService } from './users.service'
@@ -18,8 +18,8 @@ export class UsersController {
   }
 
   @Get()
-  async findAll(@Req() request: IQueryRequest) {
-    const { term, page, limit } = request.query as unknown as IQueryRequest
+  async findAll(@Req() request: IUserRequest) {
+    const { term, page, limit } = request.query as unknown as IUserRequest
     return await this.usersService.findAll({ term, page, limit }, request.user._id)
   }
 

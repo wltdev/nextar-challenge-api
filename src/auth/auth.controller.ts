@@ -1,4 +1,5 @@
 import { CreateUserDto } from '@/users/dto/create-user.dto'
+import { IUserRequest } from '@/users/interfaces/request'
 import { Body, Controller, Get, Post, Put, Request, UseGuards } from '@nestjs/common'
 
 import { UpdateUserDto } from './../users/dto/update-user.dto'
@@ -13,7 +14,7 @@ export class AuthController {
   @Public()
   @UseGuards(LocalAuthGuard)
   @Post('signin')
-  async signin(@Request() request: any) {
+  async signin(@Request() request: IUserRequest) {
     return await this.authService.login(request.user)
   }
 
@@ -24,12 +25,12 @@ export class AuthController {
   }
 
   @Get('profile')
-  async profile(@Request() request: any) {
+  async profile(@Request() request: IUserRequest) {
     return request.user
   }
 
   @Put('profile')
-  async updateProfile(@Body() body: UpdateUserDto, @Request() request: any) {
+  async updateProfile(@Body() body: UpdateUserDto, @Request() request: IUserRequest) {
     return await this.authService.update(request.user._id, body)
   }
 }

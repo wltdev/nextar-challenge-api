@@ -25,7 +25,7 @@ export class User {
   @Prop({ required: true, unique: true })
   email: string
 
-  @Prop({ required: true, minlength: 6 })
+  @Prop({ required: true, select: false, minlength: 6 })
   password: string
 
   @Prop({ default: 'standard' })
@@ -38,23 +38,16 @@ export class User {
 export const UserSchema = SchemaFactory.createForClass(User)
 
 UserSchema.pre('save', async function (next) {
-  const hashed = await hash(this.password, 10)
-  this.password = hashed
+  this.password = await hash(this.password, 10)
 
   next()
 })
 
-// UserSchema.path('password').validate(function (payload) {
-//   return payload.length < 6
-// }, 'Path `password` is shorter than the minimum allowed length (6)')
-
 UserSchema.pre('findOneAndUpdate', async function (next) {
-  const docToUpdate = await this.model.findOne(this.getQuery(), '+password')
   const payload = this.getUpdate()['$set']
 
-  if (payload.password && payload.password !== docToUpdate.password) {
-    const hashed = await hash(payload.password, 10)
-    this.getUpdate()['$set'].password = hashed
+  if (payload.password && payload.password.length >= 6) {
+    payload.password = await hash(payload.password, 10)
   }
 
   next()
