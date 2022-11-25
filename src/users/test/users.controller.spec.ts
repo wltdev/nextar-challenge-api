@@ -3,6 +3,7 @@ import { Test } from '@nestjs/testing'
 
 import { CreateUserDto } from '../dto/create-user.dto'
 import { UpdateUserDto } from '../dto/update-user.dto'
+import { IUserRequest } from '../interfaces/request'
 import { UsersController } from '../users.controller'
 import { UsersService } from '../users.service'
 import { userStub } from './stubs/user.stub'
@@ -49,14 +50,23 @@ describe('UsersController', () => {
       let users: UserDocument[]
 
       beforeEach(async () => {
-        users = await usersController.findAll()
+        const params = {
+          query: {
+            term: 'searching name',
+            page: '0',
+            limit: '10'
+          },
+          user: userStub()
+        } as unknown as IUserRequest
+
+        users = await usersController.findAll(params)
       })
 
       it('should be able to call usersService.findAll', () => {
         expect(usersService.findAll).toHaveBeenCalled()
       })
 
-      it('shoud return users', () => {
+      it('should return users', () => {
         expect(users).toEqual([userStub()])
       })
     })

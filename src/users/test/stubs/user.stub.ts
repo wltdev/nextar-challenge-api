@@ -1,7 +1,7 @@
 import { UserDocument } from '@/users/schemas/user.schema'
 
 export const userStub = (): UserDocument => ({
-  _id: 'fake-1',
+  _id: 'fake-id',
   name: 'fake user 1',
   email: 'fake1@email.com',
   permission: 'standard',

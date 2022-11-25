@@ -1,27 +1,16 @@
 import { Module } from '@nestjs/common'
 import { APP_GUARD, APP_FILTER } from '@nestjs/core'
-import { MongooseModule } from '@nestjs/mongoose'
 
 import { AuthModule } from './auth/auth.module'
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard'
-import { database } from './config'
+import { DatabaseModule } from './database/database.module'
 import { HttpExceptionFilter } from './exceptions/http-exceptions.filters'
 import { MongoErrorFilter } from './exceptions/mongo-exception.filter'
 import { RolesGuard } from './users/roles/roles.guard'
 import { UsersModule } from './users/users.module'
 
 @Module({
-  imports: [
-    MongooseModule.forRoot(database.host, {
-      connectionFactory: (connection) => {
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        connection.plugin(require('mongoose-unique-validator'))
-        return connection
-      }
-    }),
-    UsersModule,
-    AuthModule
-  ],
+  imports: [DatabaseModule, UsersModule, AuthModule],
   controllers: [],
   providers: [
     {

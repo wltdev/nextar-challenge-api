@@ -1,9 +1,8 @@
-export interface IUser {
-  _id: string
-  name: string
-  email: string
-  permission?: string
-  phone?: string
+import { UserDocument } from '@/users/schemas/user.schema'
+
+export interface IUserToken {
+  access_token: string
+  user: UserDocument
 }
 
 export interface IUserPayload {
